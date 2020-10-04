@@ -279,7 +279,7 @@ You may also want to click "RESET" after changing nodes position.`,
           tip: "White nodes neither attract nor repel particles.",
       },
       {
-          name: "Blue",
+          name: "blue",
           nodes: [
               { at: [130, 100], mass: 1 },
               { at: [100, 100], mass: -0.3 },
@@ -294,7 +294,7 @@ You may also want to click "RESET" after changing nodes position.`,
           tip: `You have to fullfill all goals, including optional, at once to get "gold" on level.`,
       },
       {
-          name: "Each",
+          name: "each",
           nodes: [
               { at: [130, 100], mass: 2 },
               { at: [100, 100], mass: -0.5 },
@@ -367,7 +367,8 @@ You may also want to click "RESET" after changing nodes position.`,
           name: "10-5",
           nodes: [...new Array(5)].map((v, i) => ({
               at: [150 + i * 20, 100],
-              mass: 0.5,
+              radius: i == 0 ? 7 : null,
+              mass: i == 0 ? 0 : 0.5,
           })),
           launchers: [...new Array(10)].map((v, i) => ({
               from: [100 + 20 * i, 295],
@@ -428,8 +429,7 @@ You may also want to click "RESET" after changing nodes position.`,
               }],
           goals: [["trailsHitNode", 1, 0]],
           optional: [["totalLength", 450]],
-      },
-      {
+      }, {
           name: "blue forest",
           nodes: [...new Array(35)].map((v, i) => ({
               at: [50 * (i % 7 + 1), 50 * (~~(i / 7) + 1)],

@@ -81,7 +81,7 @@ You may also want to click "RESET" after changing nodes position.`,
     tip: "White nodes neither attract nor repel particles.",
   },
   {
-    name: "Blue",
+    name: "blue",
     nodes: [
       { at: [130, 100], mass: 1 },
       { at: [100, 100], mass: -0.3 },
@@ -96,7 +96,7 @@ You may also want to click "RESET" after changing nodes position.`,
     tip: `You have to fullfill all goals, including optional, at once to get "gold" on level.`,
   },
   {
-    name: "Each",
+    name: "each",
     nodes: [
       { at: [130, 100], mass: 2 },
       { at: [100, 100], mass: -0.5 },
@@ -169,7 +169,8 @@ You may also want to click "RESET" after changing nodes position.`,
     name: "10-5",
     nodes: [...new Array(5)].map((v, i) => ({
       at: [150 + i * 20, 100],
-      mass: 0.5,
+      radius: i==0?7:null,
+      mass: i==0?0:0.5,
     })),
     launchers: [...new Array(10)].map((v, i) => ({
       from: [100 + 20 * i, 295],
@@ -236,7 +237,7 @@ You may also want to click "RESET" after changing nodes position.`,
       at: [50 * (i%7 + 1), 50 * (~~(i/7) + 1)],
       mass: i%10?-1:-0.1,
       nailed: i%10
-    })),
+    } as any)),
     launchers: [{
       from: [0, 150],
       vel: [0.1, 0],
