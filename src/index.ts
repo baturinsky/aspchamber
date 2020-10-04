@@ -21,7 +21,7 @@ function chamberFromObject({ name, friction, nodes, launchers, goals, optional, 
 
 let chambers = JSON.parse(JSON.stringify(levels)).map(chamberFromObject);
 
-let currentChamber = 0;
+let currentChamber = 1;
 
 let solvedChambers = {};
 

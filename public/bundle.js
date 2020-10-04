@@ -494,7 +494,7 @@ You may also want to click "RESET" after changing nodes position.`
       return new Chamber(name, friction, nodes, launchers, goals, optional, tip);
   }
   let chambers = JSON.parse(JSON.stringify(levels)).map(chamberFromObject);
-  let currentChamber = 0;
+  let currentChamber = 1;
   let solvedChambers = {};
   load();
   function serialize() {
