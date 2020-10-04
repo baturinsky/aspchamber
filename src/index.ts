@@ -12,6 +12,7 @@ import {
   v2Len,
   v2Mul,
   v2New,
+  v2Normalized,
   v2Sum,
 } from "./v2";
 
@@ -123,20 +124,18 @@ function newGame() {
 
         let r = draggedNode.radius;
 
-        let blocked = false;
+        let blocked:v2 = null;
 
-        if (c.launchers.find((l) => v2Dist(l.from, newPos) < r + 5)) blocked = true;
+        let blockingLauncher = c.launchers.find((l) => v2Dist(l.from, newPos) < r + 5);
+        let blockingNode = c.nodes.find(
+          (n) =>
+            n !== draggedNode && v2Dist(n.at, draggedNode.at) < n.radius + r
+        );
 
-        if (
-          c.nodes.find(
-            (n) =>
-              n !== draggedNode && v2Dist(n.at, draggedNode.at) < n.radius + r
-          )
-        )
-        blocked = true;;
+        blocked = (blockingLauncher && blockingLauncher.from) || (blockingNode && blockingNode.at);
 
         if(blocked)
-            v2Add(draggedNode.at, [-delta[0], -delta[1]])
+            v2Add(draggedNode.at, v2Normalized(v2Dif(blocked, draggedNode.at)))
         else
           draggedNode.at = newPos;
 

@@ -247,7 +247,42 @@ You may also want to click "RESET" after changing nodes position.`,
     }],
     goals: [["trailsHitNode", 1, 0]],
     optional: [["totalLength", 450]],
+  },  {
+    name: "blue forest",
+    nodes: [...new Array(35)].map((v, i) => ({
+      at: [50 * (i%7 + 1), 50 * (~~(i/7) + 1)],
+      mass: i%10?-1:-0.1,
+      nailed: i%10
+    })),
+    launchers: [{
+      from: [0, 150],
+      vel: [0.1, 0],
+    }],
+    goals: [["totalLength", 800]],
+    optional: [["totalLength", 1300]],
   },  
+  {
+    name: "orbit",
+    nodes: [
+      { at: [310, 150], mass: 0, radius: 3, nailed: true },
+      { at: [20, 100], mass: 0.3 },
+      { at: [20, 120], mass: 0.3 },
+      { at: [20, 140], mass: 0.3 },
+      { at: [20, 160], mass: 0.3 },
+      { at: [20, 180], mass: 0.3 },
+      { at: [200, 150], mass: 30, radius: 100, nailed: true },
+    ],
+    launchers: [
+      {
+        from: [5, 150],
+        vel: [0.1, 0],
+      },
+    ],
+    goals: [["trailsHitNode", 1, 0]],
+    optional: [["totalLength", 470]],
+    tip: "White nodes neither attract nor repel particles.",
+  },
+
 ];
 
 export default levels;
