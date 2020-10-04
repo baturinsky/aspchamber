@@ -1,0 +1,71 @@
+<html>
+  <head> </head>
+  <style>
+    body {
+      color: #fff;
+      background-color: #000;
+      padding: 0;
+      margin: 0;
+      font: 14px Courier;
+    }
+    canvas {
+      position: absolute;
+      right: 1%;
+      border: solid 1px #fff;
+      background: #000;
+      padding:0;
+    }
+    .tip {
+      position: absolute;
+      right: 30px;
+      top: 15px;
+      font: 14px Courier;
+    }
+    #buttons{
+      width: 20vw;
+      padding-left:0.1vw;
+    }
+    button{
+      width: 9vw;
+      margin-right: 0.5vh;
+      height: 3vh;
+      font: 12px Courier;
+    }
+    button.done1{
+      color: #0f0;
+    }
+    button.done2{
+      color: #ff0;
+    }
+    button:hover{
+      background: #444;
+    }
+    #box{
+      display: flex;
+      flex-direction: row;
+      margin-top: 5vh;
+    }
+    #reset, #custom, #apply, textarea{
+      width:calc(18vw + 5px);
+    }
+    button.current{
+      border: solid 1px #fff;
+    }
+    button, textarea{
+      border: solid 1px #aaa;
+      color: #fff;
+      background: #000;
+      margin-bottom: 0.5vh;
+    }
+    textarea{
+      height: 60vh;
+    }
+  </style>
+  <body>
+    <div id="box">
+      <div id="buttons"></div>
+      <canvas id="C"></canvas>
+    </div>
+  </body>
+  <script src="bundle.js"></script>
+</html>
