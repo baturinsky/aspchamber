@@ -1,5 +1,6 @@
 import { Chamber } from './chamber';
 import { capitalize, greek } from './util';
+import { v2Dist } from './v2';
 
 let noiseC = document.createElement('canvas');
 noiseC.width = 2000;
@@ -63,10 +64,15 @@ export function render({
     cc.beginPath();
     cc.moveTo(path[0][0], path[0][1]);
     for (let i = 1; i < path.length; i++) {
+      if(i%10 == 1)
+        cc.lineWidth = Math.min(2,v2Dist(path[i], path[i-1])/20);
+      //cc.lineWidth = 10;
       cc.lineTo(path[i][0], path[i][1]);
-    }
-    cc.stroke();
+      cc.stroke();
+    }    
   }
+
+  cc.lineWidth = 0.5;
 
   for (let [i, p] of Object.entries(chamber.nodes).reverse()) {
     cc.fillStyle = cc.strokeStyle =

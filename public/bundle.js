@@ -29,6 +29,9 @@
   function v2Dif(a, b) {
       return new Float32Array([b[0] - a[0], b[1] - a[1]]);
   }
+  function v2Sum(a, b) {
+      return new Float32Array([a[0] + b[0], a[1] + b[1]]);
+  }
   function v2Add(a, b) {
       a[0] += b[0];
       a[1] += b[1];
@@ -74,7 +77,7 @@
           let end = null;
           let length = 0;
           for (let i = 0; i < 1500; i++) {
-              for (let segLength = 0, j = 0; segLength < 1 && j < 20; j++) {
+              for (let segLength = 0, j = 0; segLength < 3 && j < 10; j++) {
                   for (let p of this.nodes) {
                       v2Add(vel, pull(at, p.at, p.mass));
                       let len = v2Len(vel);
@@ -203,24 +206,23 @@
       {
           name: "custom",
           tip: `Shift click level button to copy it to custom level editor. Then you can edit it and click "APPLY" to play
-You may also want to click "RESET" after changing nodes position.`
+You may also want to click "RESET" after changing nodes position.`,
       },
       {
           name: "loop",
-          nodes: [{ at: [100, 150], mass: 0.1 }, { at: [100, 160], mass: 0.3 }],
+          nodes: [
+              { at: [100, 150], mass: 0.1 },
+              { at: [100, 160], mass: 0.3 },
+          ],
           launchers: [
               {
                   from: [5, 100],
                   vel: [0.1, 0],
               },
           ],
-          goals: [
-              ["totalLength", 400]
-          ],
-          optional: [
-              ["totalLength", 550]
-          ],
-          tip: "Drag nodes (circles) with mouse to meet the objectives (see top lright corner)."
+          goals: [["totalLength", 400]],
+          optional: [["totalLength", 550]],
+          tip: "Drag nodes (circles) with mouse to meet the objectives (see top lright corner).",
       },
       {
           name: "Three lines",
@@ -232,44 +234,42 @@ You may also want to click "RESET" after changing nodes position.`
               from: [5, 100 + 10 * i],
               vel: [0.03, 0],
           })),
-          goals: [
-              ["totalLength", 1400]
-          ],
-          optional: [
-              ["totalLength", 1750]
-          ],
-          tip: "Red nodes attract particles, blue repel them. Strength is usually dependent on node's size."
+          goals: [["totalLength", 1400]],
+          optional: [["totalLength", 1750]],
+          tip: "Red nodes attract particles, blue repel them. Strength is usually dependent on node's size.",
       },
       {
           name: "nailed",
-          nodes: [{ at: [100, 150], mass: 0.1 }, { at: [100, 160], mass: 0.3, nailed: true }],
+          nodes: [
+              { at: [100, 150], mass: 0.1 },
+              { at: [100, 160], mass: 0.3, nailed: true },
+          ],
           launchers: [
               {
                   from: [5, 100],
                   vel: [0.2, 0],
               },
           ],
-          goals: [
-              ["totalLength", 500]
-          ],
-          optional: [
-              ["totalLength", 700]
-          ],
-          tip: "Some nodes can't be moved."
+          goals: [["totalLength", 700]],
+          optional: [["totalLength", 800]],
+          tip: "Some nodes can't be moved.",
       },
       {
           name: "roadblock",
-          nodes: [{ at: [200, 150], mass: 0.1 }, { at: [200, 150], mass: -0.1 }, { at: [100, 100], mass: 0, radius: 50, nailed: true }],
+          nodes: [
+              { at: [200, 150], mass: 0.1 },
+              { at: [200, 200], mass: -0.1 },
+              { at: [100, 100], mass: 0, radius: 50, nailed: true },
+          ],
           launchers: [
               {
                   from: [5, 100],
                   vel: [0.1, 0],
               },
           ],
-          goals: [
-              ["totalLength", 450]
-          ],
-          tip: "White nodes neither attract nor repel particles."
+          goals: [["totalLength", 450]],
+          optional: [["totalLength", 500]],
+          tip: "White nodes neither attract nor repel particles.",
       },
       {
           name: "Blue",
@@ -282,20 +282,16 @@ You may also want to click "RESET" after changing nodes position.`
               from: [5, 100 + 10 * i],
               vel: [0.03, 0],
           })),
-          goals: [
-              ["trailsHitNode", 1, 1]
-          ],
-          optional: [
-              ["trailsHitNode", 3, 1]
-          ],
-          tip: `You have to fullfill all goals, including optional, at once to get "gold" on level.`
+          goals: [["trailsHitNode", 1, 1]],
+          optional: [["trailsHitNode", 3, 1]],
+          tip: `You have to fullfill all goals, including optional, at once to get "gold" on level.`,
       },
       {
           name: "Each",
           nodes: [
-              { at: [130, 100], mass: 0.4 },
-              { at: [100, 100], mass: -0.1 },
-              { at: [160, 100], mass: 0.4 },
+              { at: [130, 100], mass: 2 },
+              { at: [100, 100], mass: -0.5 },
+              { at: [160, 100], mass: 2 },
           ],
           launchers: [...new Array(3)].map((v, i) => ({
               from: [5, 100 + 10 * i],
@@ -306,9 +302,7 @@ You may also want to click "RESET" after changing nodes position.`
               ["trailHitsNode", 1, 1],
               ["trailHitsNode", 2, 2],
           ],
-          optional: [
-              ["totalLength", 1000]
-          ]
+          optional: [["totalLength", 1000]],
       },
       {
           name: "Switch",
@@ -326,9 +320,7 @@ You may also want to click "RESET" after changing nodes position.`
               ["trailHitsNode", 1, 1],
               ["trailHitsNode", 2, 0],
           ],
-          optional: [
-              ["totalLength", 1000]
-          ]
+          optional: [["totalLength", 1000]],
       },
       {
           name: "radial",
@@ -338,17 +330,18 @@ You may also want to click "RESET" after changing nodes position.`
               { at: [160, 100], mass: 1 },
           ],
           launchers: [...new Array(6)].map((v, i) => ({
-              from: [100 + Math.sin(i * 6.28 / 6) * 3, 100 + Math.cos(i * 6.28 / 6) * 3],
-              vel: [Math.sin(i * 6.28 / 6) * 0.1, Math.cos(i * 6.28 / 6) * 0.1],
+              from: [
+                  100 + Math.sin((i * 6.28) / 6) * 3,
+                  100 + Math.cos((i * 6.28) / 6) * 3,
+              ],
+              vel: [Math.sin((i * 6.28) / 6) * 0.1, Math.cos((i * 6.28) / 6) * 0.1],
           })),
           goals: [
               ["trailsHitNode", 2, 0],
               ["trailsHitNode", 2, 1],
               ["trailsHitNode", 2, 2],
           ],
-          optional: [
-              ["totalLength", 2000]
-          ]
+          optional: [["totalLength", 2000]],
       },
       {
           name: "converge",
@@ -357,15 +350,14 @@ You may also want to click "RESET" after changing nodes position.`
               { at: [130, 100], mass: 1 },
           ],
           launchers: [...new Array(6)].map((v, i) => ({
-              from: [100 + Math.sin(i * 6.28 / 6) * 3, 100 + Math.cos(i * 6.28 / 6) * 3],
-              vel: [Math.sin(i * 6.28 / 6) * 0.1, Math.cos(i * 6.28 / 6) * 0.1],
+              from: [
+                  100 + Math.sin((i * 6.28) / 6) * 3,
+                  100 + Math.cos((i * 6.28) / 6) * 3,
+              ],
+              vel: [Math.sin((i * 6.28) / 6) * 0.1, Math.cos((i * 6.28) / 6) * 0.1],
           })),
-          goals: [
-              ["trailsHitNode", 5, 0],
-          ],
-          optional: [
-              ["trailsHitNode", 1, 1],
-          ]
+          goals: [["trailsHitNode", 5, 0]],
+          optional: [["trailsHitNode", 1, 1]],
       },
       {
           name: "implosion",
@@ -378,12 +370,74 @@ You may also want to click "RESET" after changing nodes position.`
               from: [100 + 20 * i, 295],
               vel: [0, -0.1],
           })),
-          goals: [
-              ["trailsHitNode", 8, 0],
+          goals: [["trailsHitNode", 8, 0]],
+          optional: [["trailsHitNode", 10, 0]],
+      },
+      {
+          name: "10-5",
+          nodes: [...new Array(5)].map((v, i) => ({
+              at: [150 + i * 20, 100],
+              mass: 0.5,
+          })),
+          launchers: [...new Array(10)].map((v, i) => ({
+              from: [100 + 20 * i, 295],
+              vel: [0, -0.1],
+          })),
+          goals: [["trailsHitNode", 6, 0]],
+          optional: [["trailsHitNode", 7, 0]],
+      },
+      {
+          name: "10-5 fixed",
+          nodes: [...new Array(5)].map((v, i) => ({
+              at: [150 + i * 20, 100],
+              mass: 0.5,
+              nailed: i == 2,
+          })),
+          launchers: [...new Array(10)].map((v, i) => ({
+              from: [100 + 20 * i, 295],
+              vel: [0, -0.1],
+          })),
+          goals: [["trailsHitNode", 4, 2]],
+          optional: [["trailsHitNode", 5, 2]],
+      },
+      {
+          name: "split",
+          friction: 0,
+          nodes: [
+              { at: [300, 100], mass: 0, radius: 4, nailed: true },
+              { at: [300, 120], mass: 0, radius: 4, nailed: true },
+              { at: [300, 140], mass: 0, radius: 4, nailed: true },
+              { at: [300, 160], mass: 0, radius: 4, nailed: true },
+              { at: [300, 180], mass: 0, radius: 4, nailed: true },
+              { at: [300, 200], mass: 0, radius: 4, nailed: true },
+              { at: [100, 100], mass: 1 },
+              { at: [160, 100], mass: 1 },
           ],
-          optional: [
-              ["trailsHitNode", 10, 0],
-          ]
+          launchers: [...new Array(6)].map((v, i) => ({
+              from: [5, 80 + 1 * i],
+              vel: [0.1, 0],
+          })),
+          goals: [["trailsHitNode", 1, 0], ["trailsHitNode", 1, 1], ["trailsHitNode", 1, 2], ["trailsHitNode", 1, 3],],
+          optional: [["trailsHitNode", 1, 4], ["trailsHitNode", 1, 5]],
+      },
+      {
+          name: "forest",
+          nodes: [{
+                  at: [375, 150],
+                  mass: 0,
+                  nailed: true,
+                  radius: 5
+              }].concat([...new Array(35)].map((v, i) => ({
+              at: [50 * (i % 7 + 1), 50 * (~~(i / 7) + 1)],
+              mass: 0.5,
+              nailed: i % 10
+          }))),
+          launchers: [{
+                  from: [0, 150],
+                  vel: [0.1, 0],
+              }],
+          goals: [["trailsHitNode", 1, 0]],
+          optional: [["totalLength", 450]],
       },
   ];
 
@@ -430,10 +484,14 @@ You may also want to click "RESET" after changing nodes position.`
           cc.beginPath();
           cc.moveTo(path[0][0], path[0][1]);
           for (let i = 1; i < path.length; i++) {
+              if (i % 10 == 1)
+                  cc.lineWidth = Math.min(2, v2Dist(path[i], path[i - 1]) / 20);
+              //cc.lineWidth = 10;
               cc.lineTo(path[i][0], path[i][1]);
+              cc.stroke();
           }
-          cc.stroke();
       }
+      cc.lineWidth = 0.5;
       for (let [i, p] of Object.entries(chamber.nodes).reverse()) {
           cc.fillStyle = cc.strokeStyle =
               p.mass > 0 ? '#f00' : p.mass < 0 ? '#00f' : '#fff';
@@ -490,7 +548,7 @@ You may also want to click "RESET" after changing nodes position.`
       C.height = (C.width * 3) / 4;
       needRedraw = true;
   }
-  function chamberFromObject({ name, friction, nodes, launchers, goals, optional, tip }) {
+  function chamberFromObject({ name, friction, nodes, launchers, goals, optional, tip, }) {
       return new Chamber(name, friction, nodes, launchers, goals, optional, tip);
   }
   let chambers = JSON.parse(JSON.stringify(levels)).map(chamberFromObject);
@@ -545,7 +603,8 @@ You may also want to click "RESET" after changing nodes position.`
                   button.classList.add("current");
           }
           for (let id of ["customEdit", "apply"])
-              document.getElementById(id).style.display = currentChamber == 0 ? "block" : "none";
+              document.getElementById(id).style.display =
+                  currentChamber == 0 ? "block" : "none";
           needRedraw = false;
       }
       let mouse = initControls(C, {
@@ -556,10 +615,19 @@ You may also want to click "RESET" after changing nodes position.`
               draggedNode = null;
           },
           mousemove: (delta) => {
+              let c = chambers[currentChamber];
               if (draggedNode && !draggedNode.nailed) {
-                  v2Add(draggedNode.at, delta);
-                  if (draggedNode.at[0] < 30)
-                      draggedNode.at[0] = 30;
+                  let newPos = v2Sum(draggedNode.at, delta);
+                  let r = draggedNode.radius;
+                  let blocked = false;
+                  if (c.launchers.find((l) => v2Dist(l.from, newPos) < r + 5))
+                      blocked = true;
+                  if (c.nodes.find((n) => n !== draggedNode && v2Dist(n.at, draggedNode.at) < n.radius + r))
+                      blocked = true;
+                  if (blocked)
+                      v2Add(draggedNode.at, [-delta[0], -delta[1]]);
+                  else
+                      draggedNode.at = newPos;
                   needRedraw = true;
               }
           },
@@ -575,7 +643,8 @@ You may also want to click "RESET" after changing nodes position.`
                       currentChamber = 0;
                       break;
                   case "apply":
-                      chambers[0] = chamberFromObject(JSON.parse(document.getElementById("customEdit").value));
+                      chambers[0] = chamberFromObject(JSON.parse(document.getElementById("customEdit")
+                          .value));
                       break;
               }
               needRedraw = true;
@@ -587,13 +656,13 @@ You may also want to click "RESET" after changing nodes position.`
                           document.getElementById("customEdit").value = JSON.stringify(levels[cmd[1]]);
                       break;
               }
-          }
+          },
       });
       function updateChamber() {
           let chamber = chambers[currentChamber];
           chamber.update();
           let s = [chamber.checkGoals().solved, chamber.checkOptional().solved];
-          solvedChambers[chamber.name] = Math.max(solvedChambers[chamber.name], s[0] ? (s[1] ? 2 : 1) : 0);
+          solvedChambers[chamber.name] = Math.max(solvedChambers[chamber.name] || 0, s[0] ? (s[1] ? 2 : 1) : 0);
           needRedraw = true;
       }
       function update(t) {

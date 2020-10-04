@@ -58,7 +58,7 @@ export class Chamber {
     let end: Node = null;
     let length = 0;
     for (let i = 0; i < 1500; i++) {
-      for (let segLength = 0, j = 0; segLength < 1 && j < 20; j++) {
+      for (let segLength = 0, j = 0; segLength < 3 && j < 10; j++) {
         for (let p of this.nodes) {
           v2Add(vel, pull(at, p.at, p.mass));
           let len = v2Len(vel);

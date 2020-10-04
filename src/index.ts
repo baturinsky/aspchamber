@@ -3,7 +3,17 @@ import { initControls } from "./controls";
 import levels from "./levels";
 import { render } from "./render";
 import { capitalize } from "./util";
-import { v2, v2Add, v2Copy, v2Dif, v2Dist, v2Len, v2Mul, v2New } from "./v2";
+import {
+  v2,
+  v2Add,
+  v2Copy,
+  v2Dif,
+  v2Dist,
+  v2Len,
+  v2Mul,
+  v2New,
+  v2Sum,
+} from "./v2";
 
 let C = document.getElementById("C") as HTMLCanvasElement;
 let needRedraw = true;
@@ -14,12 +24,21 @@ function scaleToWindow() {
   needRedraw = true;
 }
 
-
-function chamberFromObject({ name, friction, nodes, launchers, goals, optional, tip }){  
-  return new Chamber(name, friction, nodes, launchers, goals, optional, tip)
+function chamberFromObject({
+  name,
+  friction,
+  nodes,
+  launchers,
+  goals,
+  optional,
+  tip,
+}) {
+  return new Chamber(name, friction, nodes, launchers, goals, optional, tip);
 }
 
-let chambers = JSON.parse(JSON.stringify(levels)).map(chamberFromObject);
+let chambers: Chamber[] = JSON.parse(JSON.stringify(levels)).map(
+  chamberFromObject
+);
 
 let currentChamber = 1;
 
@@ -71,7 +90,7 @@ function newGame() {
       .map((c, i) => `<button id="chamber:${i}">${capitalize(c.name)}</button>`)
       .slice(1)
       .join("") +
-    `<button id="custom">CUSTOM</button><textarea id="customEdit" value="123"></textarea><button id="apply">APPLY</button>`
+    `<button id="custom">CUSTOM</button><textarea id="customEdit" value="123"></textarea><button id="apply">APPLY</button>`;
 
   function renderAll() {
     render({ C, chamber: chambers[currentChamber] });
@@ -83,8 +102,9 @@ function newGame() {
       if (i == currentChamber) button.classList.add("current");
     }
 
-    for(let id of ["customEdit", "apply"])
-      document.getElementById(id).style.display = currentChamber==0?"block":"none";
+    for (let id of ["customEdit", "apply"])
+      document.getElementById(id).style.display =
+        currentChamber == 0 ? "block" : "none";
 
     needRedraw = false;
   }
@@ -97,9 +117,29 @@ function newGame() {
       draggedNode = null;
     },
     mousemove: (delta: v2) => {
+      let c = chambers[currentChamber];
       if (draggedNode && !draggedNode.nailed) {
-        v2Add(draggedNode.at, delta);
-        if (draggedNode.at[0] < 30) draggedNode.at[0] = 30;
+        let newPos = v2Sum(draggedNode.at, delta);
+
+        let r = draggedNode.radius;
+
+        let blocked = false;
+
+        if (c.launchers.find((l) => v2Dist(l.from, newPos) < r + 5)) blocked = true;
+
+        if (
+          c.nodes.find(
+            (n) =>
+              n !== draggedNode && v2Dist(n.at, draggedNode.at) < n.radius + r
+          )
+        )
+        blocked = true;;
+
+        if(blocked)
+            v2Add(draggedNode.at, [-delta[0], -delta[1]])
+        else
+          draggedNode.at = newPos;
+
         needRedraw = true;
       }
     },
@@ -115,7 +155,12 @@ function newGame() {
           currentChamber = 0;
           break;
         case "apply":
-          chambers[0] = chamberFromObject(JSON.parse((document.getElementById("customEdit") as HTMLTextAreaElement).value))
+          chambers[0] = chamberFromObject(
+            JSON.parse(
+              (document.getElementById("customEdit") as HTMLTextAreaElement)
+                .value
+            )
+          );
           break;
       }
       needRedraw = true;
@@ -123,11 +168,13 @@ function newGame() {
     shiftButton: (cmd) => {
       switch (cmd[0]) {
         case "chamber":
-          if(currentChamber == 0) 
-            (document.getElementById("customEdit") as HTMLTextAreaElement).value = JSON.stringify(levels[cmd[1]]);
+          if (currentChamber == 0)
+            (document.getElementById(
+              "customEdit"
+            ) as HTMLTextAreaElement).value = JSON.stringify(levels[cmd[1]]);
           break;
       }
-    }
+    },
   });
 
   function updateChamber() {
@@ -135,7 +182,7 @@ function newGame() {
     chamber.update();
     let s = [chamber.checkGoals().solved, chamber.checkOptional().solved];
     solvedChambers[chamber.name] = Math.max(
-      solvedChambers[chamber.name],
+      solvedChambers[chamber.name] || 0,
       s[0] ? (s[1] ? 2 : 1) : 0
     );
     needRedraw = true;
