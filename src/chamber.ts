@@ -1,5 +1,5 @@
 import { greek, latin, localFixed } from "./util";
-import { v2, v2Add, v2Copy, v2Dif, v2Dist, v2From, v2Len, v2Mul } from "./v2";
+import { v2, v2Add, v2Copy, v2Dif, v2Dist, v2From, v2Len, v2Mul, v2New } from "./v2";
 export type Node = {
   at: v2;
   mass: number;
@@ -57,8 +57,8 @@ export class Chamber {
     let vel = v2Copy(initialVel);
     let end: Node = null;
     let length = 0;
-    for (let i = 0; i < 1500; i++) {
-      for (let segLength = 0, j = 0; segLength < 3 && j < 10; j++) {
+    for (let i = 0; i < 500; i++) {
+      for (let segLength = 0, j = 0; segLength < 3 && j < 200; j++) {
         for (let p of this.nodes) {
           v2Add(vel, pull(at, p.at, p.mass));
           let len = v2Len(vel);
@@ -73,7 +73,7 @@ export class Chamber {
           return { path, length, end };
         }
       }
-      path.push(at.slice());
+      path.push(v2From(at));
     }
     return { path, length, end };
   }
@@ -103,7 +103,7 @@ export class Chamber {
     }
   }
 
-  checkGoal(goal: any[]) {
+  checkGoal(goal: any[], needText=false) {
     let type = goal[0];
     let solved = false,
       text = "";
@@ -113,7 +113,8 @@ export class Chamber {
       case "totalLength":
         let target = a;
         solved = this.totalLength >= target;
-        text = `Total trail length at least: ${localFixed(
+        if(needText)
+        text = `Trails length: ${localFixed(
           this.totalLength,
           0
         )} / ${localFixed(target, 0)}`;
@@ -123,29 +124,31 @@ export class Chamber {
           let node = this.nodes[b];
           let hits = this.trails.filter((t) => t.end == node).length;
           solved = hits >= a;
-          text = `At least ${hits}/${a} trail${a>0?'s':''} hit ${greek(b)}`;
+          if(needText)
+            text = `At least ${hits}/${a} trail${a>0?'s':''} hit ${greek(b)}`;
         }
         break;
       case "trailHitsNode":
         {
           let node = this.nodes[b];
           solved = this.trails[a].end == node;
-          text = `${latin(a)} hits ${greek(b)}`;
+          if(needText)
+            text = `${latin(a)} hits ${greek(b)}`;
         }
         break;
     }
-    return { solved, text };
+    return needText?{ solved, text }:{solved};
   }
 
-  checkGoals() {
-    let goals = this.goals.map((goal) => this.checkGoal(goal));
+  checkGoals(needText=false) {
+    let goals = this.goals.map((goal) => this.checkGoal(goal, needText));
     let solved = goals.every((goal) => goal.solved);
     return { goals, solved };
   }
 
-  checkOptional() {
+  checkOptional(needText=false) {
     if (!this.optional) return { goals: [], solved: true };
-    let goals = this.optional.map((goal) => this.checkGoal(goal));
+    let goals = this.optional.map((goal) => this.checkGoal(goal, needText));
     let solved = goals.every((goal) => goal.solved);
     return { goals, solved };
   }

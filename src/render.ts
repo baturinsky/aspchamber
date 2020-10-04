@@ -98,11 +98,11 @@ export function render({
   cc.fillText(`${capitalize(chamber.name)}`, 5, 10);
   cc.fillText(`Friction: ${chamber.friction.toLocaleString()}`, 5, 20);
 
-  let goals = chamber.checkGoals();
-  let optional = chamber.checkOptional();
+  let goals = chamber.checkGoals(true);
+  let optional = chamber.checkOptional(true);
   let combined: typeof goals.goals = [].concat(goals.goals, optional.goals);
 
-  cc.font = 'bold 4pt Courier';
+  cc.font = 'bold 5pt Courier';
   for (let i = 0; i < combined.length; i++) {
     let goal = combined[i];
     let text = (i >= goals.goals.length? 'Optional: ':'') + goal.text;

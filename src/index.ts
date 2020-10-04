@@ -81,6 +81,14 @@ function load() {
   }
 }
 
+function congratulate(n = 1) {
+  let el = document.getElementById("victory");
+  el.innerHTML = n == 1 ? "Goals met" : "All goals met";
+  el.classList.remove("green","gold");
+  el.classList.add("reveal", n == 1 ? "green" : "gold");
+  setTimeout(() => el.classList.remove("reveal"), 3000);
+}
+
 function newGame() {
   let draggedNode: Node = null;
 
@@ -116,6 +124,7 @@ function newGame() {
     },
     mouseup: () => {
       draggedNode = null;
+      checkForVictory();
     },
     mousemove: (delta: v2) => {
       let c = chambers[currentChamber];
@@ -124,20 +133,23 @@ function newGame() {
 
         let r = draggedNode.radius;
 
-        let blocked:v2 = null;
+        let blocked: v2 = null;
 
-        let blockingLauncher = c.launchers.find((l) => v2Dist(l.from, newPos) < r + 5);
+        let blockingLauncher = c.launchers.find(
+          (l) => v2Dist(l.from, newPos) < r + 5
+        );
         let blockingNode = c.nodes.find(
           (n) =>
             n !== draggedNode && v2Dist(n.at, draggedNode.at) < n.radius + r
         );
 
-        blocked = (blockingLauncher && blockingLauncher.from) || (blockingNode && blockingNode.at);
+        blocked =
+          (blockingLauncher && blockingLauncher.from) ||
+          (blockingNode && blockingNode.at);
 
-        if(blocked)
-            v2Add(draggedNode.at, v2Normalized(v2Dif(blocked, draggedNode.at)))
-        else
-          draggedNode.at = newPos;
+        if (blocked)
+          v2Add(draggedNode.at, v2Normalized(v2Dif(blocked, draggedNode.at)));
+        else draggedNode.at = newPos;
 
         needRedraw = true;
       }
@@ -152,6 +164,7 @@ function newGame() {
           break;
         case "custom":
           currentChamber = 0;
+          congratulate();
           break;
         case "apply":
           chambers[0] = chamberFromObject(
@@ -176,15 +189,24 @@ function newGame() {
     },
   });
 
-  function updateChamber() {
+  function checkForVictory(){
     let chamber = chambers[currentChamber];
-    chamber.update();
-    let s = [chamber.checkGoals().solved, chamber.checkOptional().solved];
-    solvedChambers[chamber.name] = Math.max(
-      solvedChambers[chamber.name] || 0,
-      s[0] ? (s[1] ? 2 : 1) : 0
-    );
-    needRedraw = true;
+    let victory = chamber.checkGoals().solved
+      ? chamber.checkOptional().solved
+        ? 2
+        : 1
+      : 0;
+    if (victory && ((solvedChambers[chamber.name]||0) < victory)) {
+      solvedChambers[chamber.name] = victory;
+      congratulate(victory);
+      draggedNode = null;
+    }
+    renderAll();
+  }
+
+  function updateChamber() {    
+    chambers[currentChamber].update();
+    //checkForVictory();
   }
 
   function update(t: number) {

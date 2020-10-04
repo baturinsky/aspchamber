@@ -80,8 +80,8 @@
           let vel = v2Copy(initialVel);
           let end = null;
           let length = 0;
-          for (let i = 0; i < 1500; i++) {
-              for (let segLength = 0, j = 0; segLength < 3 && j < 10; j++) {
+          for (let i = 0; i < 500; i++) {
+              for (let segLength = 0, j = 0; segLength < 3 && j < 200; j++) {
                   for (let p of this.nodes) {
                       v2Add(vel, pull(at, p.at, p.mass));
                       let len = v2Len(vel);
@@ -97,7 +97,7 @@
                       return { path, length, end };
                   }
               }
-              path.push(at.slice());
+              path.push(v2From(at));
           }
           return { path, length, end };
       }
@@ -121,7 +121,7 @@
               this.nodes[i].at = v2From(this.initialPositions[i]);
           }
       }
-      checkGoal(goal) {
+      checkGoal(goal, needText = false) {
           let type = goal[0];
           let solved = false, text = "";
           let a = Number(goal[1]);
@@ -130,35 +130,38 @@
               case "totalLength":
                   let target = a;
                   solved = this.totalLength >= target;
-                  text = `Total trail length at least: ${localFixed(this.totalLength, 0)} / ${localFixed(target, 0)}`;
+                  if (needText)
+                      text = `Trails length: ${localFixed(this.totalLength, 0)} / ${localFixed(target, 0)}`;
                   break;
               case "trailsHitNode":
                   {
                       let node = this.nodes[b];
                       let hits = this.trails.filter((t) => t.end == node).length;
                       solved = hits >= a;
-                      text = `At least ${hits}/${a} trail${a > 0 ? 's' : ''} hit ${greek(b)}`;
+                      if (needText)
+                          text = `At least ${hits}/${a} trail${a > 0 ? 's' : ''} hit ${greek(b)}`;
                   }
                   break;
               case "trailHitsNode":
                   {
                       let node = this.nodes[b];
                       solved = this.trails[a].end == node;
-                      text = `${latin(a)} hits ${greek(b)}`;
+                      if (needText)
+                          text = `${latin(a)} hits ${greek(b)}`;
                   }
                   break;
           }
-          return { solved, text };
+          return needText ? { solved, text } : { solved };
       }
-      checkGoals() {
-          let goals = this.goals.map((goal) => this.checkGoal(goal));
+      checkGoals(needText = false) {
+          let goals = this.goals.map((goal) => this.checkGoal(goal, needText));
           let solved = goals.every((goal) => goal.solved);
           return { goals, solved };
       }
-      checkOptional() {
+      checkOptional(needText = false) {
           if (!this.optional)
               return { goals: [], solved: true };
-          let goals = this.optional.map((goal) => this.checkGoal(goal));
+          let goals = this.optional.map((goal) => this.checkGoal(goal, needText));
           let solved = goals.every((goal) => goal.solved);
           return { goals, solved };
       }
@@ -224,8 +227,8 @@ You may also want to click "RESET" after changing nodes position.`,
                   vel: [0.1, 0],
               },
           ],
-          goals: [["totalLength", 400]],
-          optional: [["totalLength", 550]],
+          goals: [["totalLength", 450]],
+          optional: [["totalLength", 600]],
           tip: "Drag nodes (circles) with mouse to meet the objectives (see top lright corner).",
       },
       {
@@ -239,7 +242,7 @@ You may also want to click "RESET" after changing nodes position.`,
               vel: [0.03, 0],
           })),
           goals: [["totalLength", 1400]],
-          optional: [["totalLength", 1750]],
+          optional: [["totalLength", 1700]],
           tip: "Red nodes attract particles, blue repel them. Strength is usually dependent on node's size.",
       },
       {
@@ -261,7 +264,7 @@ You may also want to click "RESET" after changing nodes position.`,
       {
           name: "roadblock",
           nodes: [
-              { at: [200, 150], mass: 0.1 },
+              { at: [200, 250], mass: 0.1 },
               { at: [200, 200], mass: -0.1 },
               { at: [100, 100], mass: 0, radius: 50, nailed: true },
           ],
@@ -271,8 +274,8 @@ You may also want to click "RESET" after changing nodes position.`,
                   vel: [0.1, 0],
               },
           ],
-          goals: [["totalLength", 450]],
-          optional: [["totalLength", 500]],
+          goals: [["totalLength", 500]],
+          optional: [["totalLength", 600]],
           tip: "White nodes neither attract nor repel particles.",
       },
       {
@@ -307,24 +310,7 @@ You may also want to click "RESET" after changing nodes position.`,
               ["trailHitsNode", 2, 2],
           ],
           optional: [["totalLength", 1000]],
-      },
-      {
-          name: "Switch",
-          nodes: [
-              { at: [130, 100], mass: 2 },
-              { at: [100, 100], mass: -0.5 },
-              { at: [160, 100], mass: 2 },
-          ],
-          launchers: [...new Array(3)].map((v, i) => ({
-              from: [5, 100 + 10 * i],
-              vel: [0.1, 0],
-          })),
-          goals: [
-              ["trailHitsNode", 0, 2],
-              ["trailHitsNode", 1, 1],
-              ["trailHitsNode", 2, 0],
-          ],
-          optional: [["totalLength", 1000]],
+          tip: `You have to stop dragging (release the mouse button) for victory to be registered`
       },
       {
           name: "radial",
@@ -478,6 +464,23 @@ You may also want to click "RESET" after changing nodes position.`,
           optional: [["totalLength", 470]],
           tip: "White nodes neither attract nor repel particles.",
       },
+      {
+          name: "blues",
+          nodes: [
+              { at: [130, 100], mass: -0.5 },
+              { at: [100, 100], mass: -0.5 },
+              { at: [160, 100], mass: -0.5 },
+              { at: [200, 150], mass: 30, nailed: true },
+          ],
+          launchers: [...new Array(4)].map((v, i) => ({
+              from: [5, 100 + 10 * i],
+              vel: [0.1, 0],
+          })),
+          goals: [
+              ["totalLength", 4000]
+          ],
+          optional: [["totalLength", 6000]],
+      },
   ];
 
   let noiseC = document.createElement('canvas');
@@ -551,10 +554,10 @@ You may also want to click "RESET" after changing nodes position.`,
       //cc.fillText(Math.round(chamber.totalLength).toLocaleString(), 10, 10);
       cc.fillText(`${capitalize(chamber.name)}`, 5, 10);
       cc.fillText(`Friction: ${chamber.friction.toLocaleString()}`, 5, 20);
-      let goals = chamber.checkGoals();
-      let optional = chamber.checkOptional();
+      let goals = chamber.checkGoals(true);
+      let optional = chamber.checkOptional(true);
       let combined = [].concat(goals.goals, optional.goals);
-      cc.font = 'bold 4pt Courier';
+      cc.font = 'bold 5pt Courier';
       for (let i = 0; i < combined.length; i++) {
           let goal = combined[i];
           let text = (i >= goals.goals.length ? 'Optional: ' : '') + goal.text;
@@ -621,6 +624,13 @@ You may also want to click "RESET" after changing nodes position.`,
           }
       }
   }
+  function congratulate(n = 1) {
+      let el = document.getElementById("victory");
+      el.innerHTML = n == 1 ? "Goals met" : "All goals met";
+      el.classList.remove("green", "gold");
+      el.classList.add("reveal", n == 1 ? "green" : "gold");
+      setTimeout(() => el.classList.remove("reveal"), 3000);
+  }
   function newGame() {
       let draggedNode = null;
       let buttonsDiv = document.getElementById("buttons");
@@ -652,6 +662,7 @@ You may also want to click "RESET" after changing nodes position.`,
           },
           mouseup: () => {
               draggedNode = null;
+              checkForVictory();
           },
           mousemove: (delta) => {
               let c = chambers[currentChamber];
@@ -661,7 +672,9 @@ You may also want to click "RESET" after changing nodes position.`,
                   let blocked = null;
                   let blockingLauncher = c.launchers.find((l) => v2Dist(l.from, newPos) < r + 5);
                   let blockingNode = c.nodes.find((n) => n !== draggedNode && v2Dist(n.at, draggedNode.at) < n.radius + r);
-                  blocked = (blockingLauncher && blockingLauncher.from) || (blockingNode && blockingNode.at);
+                  blocked =
+                      (blockingLauncher && blockingLauncher.from) ||
+                          (blockingNode && blockingNode.at);
                   if (blocked)
                       v2Add(draggedNode.at, v2Normalized(v2Dif(blocked, draggedNode.at)));
                   else
@@ -679,6 +692,7 @@ You may also want to click "RESET" after changing nodes position.`,
                       break;
                   case "custom":
                       currentChamber = 0;
+                      congratulate();
                       break;
                   case "apply":
                       chambers[0] = chamberFromObject(JSON.parse(document.getElementById("customEdit")
@@ -696,12 +710,23 @@ You may also want to click "RESET" after changing nodes position.`,
               }
           },
       });
-      function updateChamber() {
+      function checkForVictory() {
           let chamber = chambers[currentChamber];
-          chamber.update();
-          let s = [chamber.checkGoals().solved, chamber.checkOptional().solved];
-          solvedChambers[chamber.name] = Math.max(solvedChambers[chamber.name] || 0, s[0] ? (s[1] ? 2 : 1) : 0);
-          needRedraw = true;
+          let victory = chamber.checkGoals().solved
+              ? chamber.checkOptional().solved
+                  ? 2
+                  : 1
+              : 0;
+          if (victory && ((solvedChambers[chamber.name] || 0) < victory)) {
+              solvedChambers[chamber.name] = victory;
+              congratulate(victory);
+              draggedNode = null;
+          }
+          renderAll();
+      }
+      function updateChamber() {
+          chambers[currentChamber].update();
+          //checkForVictory();
       }
       function update(t) {
           if (needRedraw) {

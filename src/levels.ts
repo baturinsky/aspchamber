@@ -27,8 +27,8 @@ You may also want to click "RESET" after changing nodes position.`,
         vel: [0.1, 0],
       },
     ],
-    goals: [["totalLength", 400]],
-    optional: [["totalLength", 550]],
+    goals: [["totalLength", 450]],
+    optional: [["totalLength", 600]],
     tip:
       "Drag nodes (circles) with mouse to meet the objectives (see top lright corner).",
   },
@@ -43,7 +43,7 @@ You may also want to click "RESET" after changing nodes position.`,
       vel: [0.03, 0],
     })),
     goals: [["totalLength", 1400]],
-    optional: [["totalLength", 1750]],
+    optional: [["totalLength", 1700]],
     tip:
       "Red nodes attract particles, blue repel them. Strength is usually dependent on node's size.",
   },
@@ -66,7 +66,7 @@ You may also want to click "RESET" after changing nodes position.`,
   {
     name: "roadblock",
     nodes: [
-      { at: [200, 150], mass: 0.1 },
+      { at: [200, 250], mass: 0.1 },
       { at: [200, 200], mass: -0.1 },
       { at: [100, 100], mass: 0, radius: 50, nailed: true },
     ],
@@ -76,8 +76,8 @@ You may also want to click "RESET" after changing nodes position.`,
         vel: [0.1, 0],
       },
     ],
-    goals: [["totalLength", 450]],
-    optional: [["totalLength", 500]],
+    goals: [["totalLength", 500]],
+    optional: [["totalLength", 600]],
     tip: "White nodes neither attract nor repel particles.",
   },
   {
@@ -112,24 +112,7 @@ You may also want to click "RESET" after changing nodes position.`,
       ["trailHitsNode", 2, 2],
     ],
     optional: [["totalLength", 1000]],
-  },
-  {
-    name: "Switch",
-    nodes: [
-      { at: [130, 100], mass: 2 },
-      { at: [100, 100], mass: -0.5 },
-      { at: [160, 100], mass: 2 },
-    ],
-    launchers: [...new Array(3)].map((v, i) => ({
-      from: [5, 100 + 10 * i],
-      vel: [0.1, 0],
-    })),
-    goals: [
-      ["trailHitsNode", 0, 2],
-      ["trailHitsNode", 1, 1],
-      ["trailHitsNode", 2, 0],
-    ],
-    optional: [["totalLength", 1000]],
+    tip: `You have to stop dragging (release the mouse button) for victory to be registered`
   },
   {
     name: "radial",
@@ -282,6 +265,23 @@ You may also want to click "RESET" after changing nodes position.`,
     optional: [["totalLength", 470]],
     tip: "White nodes neither attract nor repel particles.",
   },
+  {
+    name: "blues",
+    nodes: [
+      { at: [130, 100], mass: -0.5 },
+      { at: [100, 100], mass: -0.5 },
+      { at: [160, 100], mass: -0.5 },
+      { at: [200, 150], mass: 30, nailed: true },
+    ],
+    launchers: [...new Array(4)].map((v, i) => ({
+      from: [5, 100 + 10 * i],
+      vel: [0.1, 0],
+    })),
+    goals: [
+      ["totalLength", 4000]
+    ],
+    optional: [["totalLength", 6000]],
+  },  
 
 ];
 

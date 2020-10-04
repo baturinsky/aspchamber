@@ -62,7 +62,7 @@
         margin-bottom: 0.5vh;
       }
       textarea {
-        height: 60vh;
+        height: 50vh;
       }
       #header {
         position: absolute;
@@ -77,10 +77,32 @@
         right: 5px;
         top: 5px;
       }
+      #victory{
+        position: absolute;
+        width: 100vw;
+        top: 10vh;
+        text-align: center;
+        font: 30px Courier;
+        pointer-events: none;
+        opacity: 0%;
+        transition-property: opacity;
+        transition-duration: 1s;
+        font-weight: bold;
+      }
+      #victory.reveal{
+        opacity: 100%;
+      }
+      .green{
+        color: #0f0;
+      }
+      .gold{
+        color:#ff0;
+      }
     </style>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
   </head>
   <body>
+    <div id="victory">Victory</div>
     <div id="header">A Sertain Particle Chamber</div>
     <div class="github">
       <a
